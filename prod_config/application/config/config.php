@@ -23,7 +23,7 @@ date_default_timezone_set('Europe/Istanbul');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'https://lenport.lenorabilisim.com/';
+$config['base_url'] = 'http://ironpunch.org/';
 
 /*
 |--------------------------------------------------------------------------
