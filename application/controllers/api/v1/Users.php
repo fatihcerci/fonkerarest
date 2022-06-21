@@ -8,6 +8,8 @@ class Users extends CI_Controller
     {
         parent::__construct();
 
+        $this->load->model("user_model");
+
         $this->create_status();
     }
     
@@ -30,30 +32,92 @@ class Users extends CI_Controller
         $json = $this->get_request();
         $resp = new stdClass();
 
-        $users[0] = array(
-            "avatar" => "https://cdn.quasar.dev/img/boy-avatar.png",
-            "adi" => "Admin",
-            "soyadi" => "Kullanicisi",
-            "unvan" => "admin",
-            "gsm" => "507 216 58 24",
-            "eposta" => "fatihcerci001@gmail.com",
-            "status" => "Aktif"
-        );
-        $users[1] = array(
-            "avatar" => "https://cdn.quasar.dev/img/boy-avatar.png",
-            "adi" => "Fatih",
-            "soyadi" => "Çerçi",
-            "unvan" => "Dr. Fatih Çerçi",
-            "gsm" => "507 216 58 24",
-            "eposta" => "chercycsgo@gmail.com",
-            "status" => "Pasif"
-        );
-
-        $this->load->helper("string");
-
-        $resp->data = $users;
+        $resp->data = $this->user_model->get_all();
         $resp->status = $this->create_status(true, "");
 
+        echo json_encode($resp);
+    }
+
+    public function create_user() {
+        $resp = new stdClass();
+        $json = $this->get_request();
+    
+        if(!empty($json->name)) {
+
+            if(!empty($json->id)) {
+                $update = $this->user_model->update(
+                    array("id" => $json->id),
+                    array(
+                        "name"                      => $json->name,
+                        "surname"                   => $json->surname,
+                        "title"                     => $json->title,
+                        "phone"                     => $json->phone,
+                        "email"                     => $json->email
+                    )
+                );
+
+                if($update == 1) {
+                    $resp->status = $this->create_status(true, "Kullanıcı güncellendi");
+                } else {
+                    $resp->status = $this->create_status(false, "Kullanıcı güncellenemedi");
+                    echo json_encode($resp);
+                    die();
+                }
+                
+            } else {
+                $insert = $this->user_model->add(
+                    array(
+                        "id"                        => uniqid(),
+                        "status"                    => 1,
+                        "name"                      => $json->name,
+                        "surname"                   => $json->surname,
+                        "title"                     => $json->title,
+                        "phone"                     => $json->phone,
+                        "email"                     => $json->email
+                    )
+                );
+
+                if($insert == 1) {
+                    $resp->status = $this->create_status(true, "Kullanıcı oluşturuldu");
+                } else {
+                    $resp->status = $this->create_status(false, "Kullanıcı oluşturulamadı");
+                    echo json_encode($resp);
+                    die();
+                }
+            }
+            
+        } else {
+            $resp->status = $this->create_status(false, "Zorunlu alanlar doldurulmalı");
+            echo json_encode($resp);
+            die();
+        }
+ 
+        echo json_encode($resp);
+        
+    }
+
+    public function activate_passivate_user() {
+        $resp = new stdClass();
+        $json = $this->get_request();
+    
+        if(!empty($json->id)) {
+
+            $update = $this->user_model->update(
+                array("id" => $json->id),
+                array(
+                    "status"                    => $json->status
+                )
+            );
+
+            if($update == 1) {
+                $resp->status = $this->create_status(true, "Kullanıcı güncellendi");
+            } else {
+                $resp->status = $this->create_status(false, "Kullanıcı güncellenemedi");
+                echo json_encode($resp);
+                die();
+            }
+            
+        } 
         echo json_encode($resp);
     }
 
