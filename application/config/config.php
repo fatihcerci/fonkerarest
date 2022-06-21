@@ -378,8 +378,8 @@ $config['encryption_key'] = hex2bin("a1f0dec47566bda95f9b0c896d97aa375d7a0801238
 | except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 |
 */
-$config['sess_driver'] = 'files';
-$config['sess_use_database'] = FALSE;
+$config['sess_driver'] = 'database';
+$config['sess_use_database'] = TRUE;
 $config['sess_save_path'] = 'ci_sessions';
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_expiration'] = 99999999999;

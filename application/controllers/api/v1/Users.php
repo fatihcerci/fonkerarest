@@ -26,6 +26,37 @@ class Users extends CI_Controller
         return (object) json_decode(file_get_contents('php://input'),true);
     }
 
+    public function list_users(){
+        $json = $this->get_request();
+        $resp = new stdClass();
+
+        $users[0] = array(
+            "avatar" => "https://cdn.quasar.dev/img/boy-avatar.png",
+            "adi" => "Admin",
+            "soyadi" => "Kullanicisi",
+            "unvan" => "admin",
+            "gsm" => "507 216 58 24",
+            "eposta" => "fatihcerci001@gmail.com",
+            "status" => "Aktif"
+        );
+        $users[1] = array(
+            "avatar" => "https://cdn.quasar.dev/img/boy-avatar.png",
+            "adi" => "Fatih",
+            "soyadi" => "Çerçi",
+            "unvan" => "Dr. Fatih Çerçi",
+            "gsm" => "507 216 58 24",
+            "eposta" => "chercycsgo@gmail.com",
+            "status" => "Pasif"
+        );
+
+        $this->load->helper("string");
+
+        $resp->data = $users;
+        $resp->status = $this->create_status(true, "");
+
+        echo json_encode($resp);
+    }
+
     public function test_method(){
         $json = $this->get_request();
         $resp = new stdClass();
