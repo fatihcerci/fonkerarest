@@ -1,6 +1,6 @@
 <?php
 
-class Users extends CI_Controller
+class Groups extends CI_Controller
 {
     public $status = "";
 
@@ -8,7 +8,7 @@ class Users extends CI_Controller
     {
         parent::__construct();
 
-        $this->load->model("user_model");
+        $this->load->model("group_model");
 
         $this->create_status();
     }
@@ -41,16 +41,7 @@ class Users extends CI_Controller
         $json = $this->get_request();
         $resp = new stdClass();
 
-        $records = $this->user_model->get_all();
-
-        foreach($records as $r) {
-            $date = DateTime::createFromFormat('Y-m-d', $r->birthdate);
-            $birthdate=$date->format('d/m/Y');
-
-            $r->birthdate = $birthdate;
-        }
-
-        $resp->data = $records;
+        $resp->data = $this->group_model->get_all();
         $resp->status = $this->create_status(true, "");
 
         echo json_encode($resp);
@@ -61,22 +52,18 @@ class Users extends CI_Controller
         $json = $this->get_request();
     
         if(!empty($json->name)) {
-            $date = DateTime::createFromFormat('d/m/Y', $json->birthdate);
-            $birthdate=$date->format('Y-m-d');
 
             if(!empty($json->id)) {
-                $update = $this->user_model->update(
+                $update = $this->group_model->update(
                     array("id" => $json->id),
                     array(
-                        "tckn"                      => $json->tckn,
                         "name"                      => $json->name,
-                        "surname"                   => $json->surname,
-                        "title"                     => $json->title,
-                        "birthdate"                 => $birthdate,
+                        "description"               => $json->description,
                         "phone"                     => $json->phone,
                         "email"                     => $json->email,
-                        "group_id"                  => $json->group_id,
-                        "role_id"                   => $json->role_id
+                        "address"                   => $json->address,
+
+                        "last_updated"         => date("Y-m-d H:i:s")
                     )
                 );
 
@@ -89,21 +76,16 @@ class Users extends CI_Controller
                 }
                 
             } else {
-                $insert = $this->user_model->add(
+                $insert = $this->group_model->add(
                     array(
                         "id"                        => uniqid(),
                         "status"                    => 1,
                         "created_time"              => date("Y-m-d H:i:s"),
-
-                        "tckn"                      => $json->tckn,
                         "name"                      => $json->name,
-                        "surname"                   => $json->surname,
-                        "title"                     => $json->title,
-                        "birthdate"                 => $birthdate,
+                        "description"               => $json->description,
                         "phone"                     => $json->phone,
                         "email"                     => $json->email,
-                        "group_id"                  => $json->group_id,
-                        "role_id"                   => $json->role_id
+                        "address"                   => $json->address
                     )
                 );
 
@@ -132,7 +114,7 @@ class Users extends CI_Controller
     
         if(!empty($json->id)) {
 
-            $update = $this->user_model->update(
+            $update = $this->group_model->update(
                 array(
                     "id" => $json->id
                 ),

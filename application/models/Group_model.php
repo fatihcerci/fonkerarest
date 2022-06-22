@@ -1,9 +1,9 @@
 <?php
 
-class User_model extends CI_Model
+class Group_model extends CI_Model
 {
 
-    public $tableName = "users";
+    public $tableName = "groups";
 
     public function __construct()
     {
