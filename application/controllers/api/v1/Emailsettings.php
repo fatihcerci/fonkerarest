@@ -3,6 +3,7 @@
 class Emailsettings extends CI_Controller
 {
     public $status = "";
+    public $sessionUser = "";
 
     public function __construct()
     {
@@ -11,6 +12,13 @@ class Emailsettings extends CI_Controller
         $this->load->model("emailsettings_model");
 
         $this->create_status();
+
+        if(!check_auth()){
+            echo $this->return_timeout();
+            die();
+        }
+
+        $this->sessionUser = get_session_user();
     }
     
     public function index(){
@@ -21,9 +29,17 @@ class Emailsettings extends CI_Controller
         $json = $this->get_request();
         $resp = new stdClass();
 
-        $resp->status = $this->create_status(true, "REST API Server Bağlantı Başarılı");
+        $resp->status = $this->create_status(true, "");
 
         echo json_encode($resp);
+    }
+
+    public function return_timeout() {
+        $resp = new stdClass();
+
+        $resp->status = $this->create_status(false, "MSG0000");
+        echo json_encode($resp);
+        die();
     }
 
     public function create_status($success = true, $message = "Başarılı"){
@@ -66,7 +82,8 @@ class Emailsettings extends CI_Controller
                         "to"               => $json->to,
                         "title"            => $json->title,
 
-                        "last_updated"         => date("Y-m-d H:i:s")
+                        "last_updated"     => date("Y-m-d H:i:s"),
+                        "last_updater_id"  => $this->sessionUser->id,
                     )
                 );
 
@@ -84,6 +101,7 @@ class Emailsettings extends CI_Controller
                         "id"               => uniqid(),
                         "status"           => 1,
                         "created_time"     => date("Y-m-d H:i:s"),
+                        "creator_id"       => $this->sessionUser->id,
                         
                         "protocol"         => $json->protocol,
                         "server"           => $json->server,
@@ -120,7 +138,7 @@ class Emailsettings extends CI_Controller
         $json = $this->get_request();
         $resp = new stdClass();
 
-        $email_settings = $this->emailsettings_model->get();
+        $email_settings = $this->emailsettings_model->get(array("status" => 1));
 
         $config = array(
             "protocol"   => $email_settings->protocol,
@@ -146,9 +164,26 @@ class Emailsettings extends CI_Controller
 
         if($send) {
             $resp->status = $this->create_status(true, "Test mail gönderimi başarılı");
+            $is_sent = 1;
         } else {
             $resp->status = $this->create_status(false, "Test mail gönderimi başarısız");
+            $is_sent = 0;
         }
+
+        $this->load->model("base_model");
+
+        $this->base_model->add(
+            "emails_sent",
+            array(
+                "id"                => uniqid(),
+                "created_time"      => date("Y-m-d H:i:s"),
+                "from"              => $email_settings->from,
+                "to"                => $json->test_mail,
+                "subject"           => "TEST MAIL",
+                "content"           => "Bu bir test mesajıdır.",
+                "is_sent"           => $is_sent
+            )
+        );
         
 
         echo json_encode($resp);

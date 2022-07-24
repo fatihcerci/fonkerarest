@@ -20,7 +20,6 @@ function removeTurkishChar($text)
     
 }
 
-
 function get_readable_date($date)
 {
     if(isset($date)) {
@@ -141,20 +140,19 @@ function send_email($toEmail = "", $subject = "", $message = ""){
     
     $t = &get_instance();
 
-    $t->load->model("base_model");
+    $t->load->model("emailsettings_model");
 
-    $email_settings = $t->base_model->get(
-        "email_settings",
+    $email_settings = $t->emailsettings_model->get(
         array(
-            "isActive"  => 1
+            "status"  => 1
         )
     );
 
     $config = array(
         "protocol"   => $email_settings->protocol,
-        "smtp_host"  => $email_settings->host,
+        "smtp_host"  => $email_settings->server,
         "smtp_port"  => $email_settings->port,
-        "smtp_user"  => $email_settings->user,
+        "smtp_user"  => $email_settings->account,
         "smtp_pass"  => $email_settings->password,
         "starttls"   => true,
         "charset"    => "utf-8",
@@ -165,7 +163,7 @@ function send_email($toEmail = "", $subject = "", $message = ""){
 
     $t->load->library("email", $config);
 
-    $t->email->from($email_settings->from, $email_settings->user_name);
+    $t->email->from($email_settings->from, $email_settings->title);
     $t->email->to($toEmail);
     $t->email->subject($subject);
     $t->email->message($message);
@@ -178,10 +176,13 @@ function send_email($toEmail = "", $subject = "", $message = ""){
         $is_sent = 0;
     }
     
+    $t->load->model("base_model");
+
     $insert = $t->base_model->add(
         "emails_sent",
         
         array(
+            "id"                => uniqid(),
             "created_time"      => date("Y-m-d H:i:s"),
             "from"              => $email_settings->from,
             "to"                => $toEmail,
@@ -545,4 +546,89 @@ function get_encrypt($param = "") {
     $t->load->library('encryption');
 
     return $t->encryption->encrypt($param);
+}
+
+function check_auth(){
+    $t = &get_instance();
+    $t->load->model("user_model");
+    $t->load->model("session_model");
+
+    $request = (object) json_decode(file_get_contents('php://input'),true);
+
+    if(empty($request->token)) {
+        return false;
+    }
+
+    $user_token = $t->session_model->get(array("token" => $request->token));
+
+    if(empty($user_token)) {
+        return false;
+    }
+
+    if($user_token->expiration_time < date("Y-m-d H:i:s")) {
+        $t->session_model->delete(array("token" => $request->token));
+        return false;
+    }
+
+    $t->session_model->update(
+        array(
+            "token" => $request->token
+        ),
+        array(
+            "expiration_time" => date('Y-m-d H:i:s', strtotime($t->config->item('session_expire_add_time')))
+        )
+    );
+    return true;
+}
+
+function insert_auth($user_id, $token){
+    $t = &get_instance();
+    $t->load->model("session_model");
+    $t->load->model("user_model");
+
+    $t->session_model->add(
+        array(
+            "token" => $token,
+            "created_time" => date('Y-m-d H:i:s'),
+            "expiration_time" => date('Y-m-d H:i:s', strtotime($t->config->item('session_expire_add_time'))),
+            "user_id" => $user_id
+        )
+    );
+
+    $t->user_model->update(
+        array("id" => $user_id),
+        array("last_login_time" => date('Y-m-d H:i:s'))
+    );
+
+    return true;
+}
+
+function delete_auth($user_id){
+    $t = &get_instance();
+    $t->load->model("session_model");
+
+    $t->session_model->delete(
+        array(
+            "user_id" => $user_id
+        )
+    );
+
+    return true;
+}
+
+function get_session_user(){
+    $t = &get_instance();
+    $t->load->model("user_model");
+    $t->load->model("session_model");
+
+    $request = (object) json_decode(file_get_contents('php://input'),true);
+
+    if(!empty($request->token)) {
+        $user_token = $t->session_model->get(array("token" => $request->token));
+
+        if(!empty($user_token)) {
+            return $t->user_model->get(array("id" => $user_token->user_id));
+        }
+    }
+    return false;
 }

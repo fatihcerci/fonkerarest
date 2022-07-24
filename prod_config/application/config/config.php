@@ -23,7 +23,7 @@ date_default_timezone_set('Europe/Istanbul');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://ironpunch.org/';
+$config['base_url'] = 'http://ironpunch.org/fonkerarest';
 
 /*
 |--------------------------------------------------------------------------
@@ -324,7 +324,7 @@ $config['cache_query_string'] = FALSE;
 | https://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-$config['encryption_key'] = '';
+$config['encryption_key'] = hex2bin("a1f0dec47566bda95f9b0c896d97aa375d7a08012380cac495d9aeb498cd47c0");
 
 /*
 |--------------------------------------------------------------------------
@@ -385,6 +385,8 @@ $config['sess_save_path'] = NULL;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 0;
 $config['sess_regenerate_destroy'] = FALSE;
+
+$config['session_expire_add_time'] = '+1 min';
 
 
 /*

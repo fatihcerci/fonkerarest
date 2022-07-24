@@ -3,6 +3,7 @@
 class Groups extends CI_Controller
 {
     public $status = "";
+    public $sessionUser = "";
 
     public function __construct()
     {
@@ -11,6 +12,13 @@ class Groups extends CI_Controller
         $this->load->model("group_model");
 
         $this->create_status();
+
+        if(!check_auth()){
+            echo $this->return_timeout();
+            die();
+        }
+
+        $this->sessionUser = get_session_user();
     }
     
     public function index(){
@@ -21,9 +29,17 @@ class Groups extends CI_Controller
         $json = $this->get_request();
         $resp = new stdClass();
 
-        $resp->status = $this->create_status(true, "REST API Server Bağlantı Başarılı");
+        $resp->status = $this->create_status(true, "");
 
         echo json_encode($resp);
+    }
+
+    public function return_timeout() {
+        $resp = new stdClass();
+
+        $resp->status = $this->create_status(false, "MSG0000");
+        echo json_encode($resp);
+        die();
     }
 
     public function create_status($success = true, $message = "Başarılı"){
@@ -63,7 +79,8 @@ class Groups extends CI_Controller
                         "email"                     => $json->email,
                         "address"                   => $json->address,
 
-                        "last_updated"         => date("Y-m-d H:i:s")
+                        "last_updated"              => date("Y-m-d H:i:s"),
+                        "last_updater_id"           => $this->sessionUser->id,
                     )
                 );
 
@@ -81,6 +98,8 @@ class Groups extends CI_Controller
                         "id"                        => uniqid(),
                         "status"                    => 1,
                         "created_time"              => date("Y-m-d H:i:s"),
+                        "creator_id"                => $this->sessionUser->id,
+
                         "name"                      => $json->name,
                         "description"               => $json->description,
                         "phone"                     => $json->phone,
@@ -120,7 +139,8 @@ class Groups extends CI_Controller
                 ),
                 array(
                     "status" => $json->status,
-                    "last_updated"         => date("Y-m-d H:i:s")
+                    "last_updated"         => date("Y-m-d H:i:s"),
+                    "last_updater_id"      => $this->sessionUser->id,
                 )
             );
 

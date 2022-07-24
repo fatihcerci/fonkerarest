@@ -23,7 +23,7 @@ date_default_timezone_set('Europe/Istanbul');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost/fonkerarest/';
+$config['base_url'] = 'http://ironpunch.org/fonkerarest';
 
 /*
 |--------------------------------------------------------------------------
@@ -324,8 +324,7 @@ $config['cache_query_string'] = FALSE;
 | https://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-
-$config['encryption_key'] = hex2bin("a1f0dec47566bda95f9b0c896d97aa375d7a08012380cac495d9aeb498cd47c0");
+$config['encryption_key'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -378,17 +377,16 @@ $config['encryption_key'] = hex2bin("a1f0dec47566bda95f9b0c896d97aa375d7a0801238
 | except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 |
 */
-$config['sess_driver'] = 'database';
-$config['sess_use_database'] = TRUE;
-$config['sess_save_path'] = 'ci_sessions';
+$config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
-$config['sess_expiration'] = 99999999999;
+$config['sess_expiration'] = 0;
 $config['sess_expire_on_close '] = FALSE;
+$config['sess_save_path'] = NULL;
 $config['sess_match_ip'] = FALSE;
-$config['sess_time_to_update'] = 300;
+$config['sess_time_to_update'] = 0;
 $config['sess_regenerate_destroy'] = FALSE;
 
-$config['session_expire_add_time'] = '+60 sec';
+$config['session_expire_add_time'] = '+1 min';
 
 
 /*
