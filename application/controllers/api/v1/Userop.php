@@ -75,6 +75,7 @@ class Userop extends CI_Controller
             } else {
                 $resp->status = $this->create_status(false, "MSG0002"); //Eposta veya şifre hatalı
                 echo json_encode($resp);
+                response($resp);
                 die();
             }
         } 
@@ -132,6 +133,7 @@ class Userop extends CI_Controller
             } else {
                 $resp->status = $this->create_status(false, "MSG0003");
                 echo json_encode($resp);
+                response($resp);
                 die();
             }
         } 

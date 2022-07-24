@@ -17,13 +17,12 @@ function create_log($requestParams, $user = ""){
     $t->log->requstInfo = $request;
     $t->log->requestParams = $requestParams;
     $t->log->userInfo = $user;
-    $t->log->output = $t->output->get_output();
 }
 
 function response($r){
     $t = &get_instance();
 
-    $t->log->output = $r;
+    $t->log->response = $r;
 
     $t->benchmark->mark('code_end');
     
