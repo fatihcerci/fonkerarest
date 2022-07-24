@@ -39,6 +39,7 @@ class Users extends CI_Controller
         $resp->status = $this->create_status(false, "MSG0000");
         
         echo json_encode($resp);
+        response($resp);
         die();
     }
 
@@ -70,6 +71,7 @@ class Users extends CI_Controller
         $resp->status = $this->create_status(true, "");
 
         echo json_encode($resp);
+        response($resp);
     }
 
     public function create_update() {
@@ -165,7 +167,7 @@ class Users extends CI_Controller
         }
  
         echo json_encode($resp);
-        
+        response($resp);
     }
 
     public function activate_passivate() {
@@ -195,6 +197,7 @@ class Users extends CI_Controller
             
         } 
         echo json_encode($resp);
+        response($resp);
     }
 
     public function update_password() {
@@ -248,6 +251,7 @@ class Users extends CI_Controller
             die();
         }
         echo json_encode($resp);
+        response($resp);
     }
     
 }

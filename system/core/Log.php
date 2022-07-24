@@ -102,7 +102,7 @@ class CI_Log {
 	 *
 	 * @var array
 	 */
-	protected $_levels = array('ERROR' => 1, 'DEBUG' => 2, 'INFO' => 3, 'ALL' => 4);
+	protected $_levels = array('LOG' => -1, 'ERROR' => 1, 'DEBUG' => 2, 'INFO' => 3, 'ALL' => 4);
 
 	/**
 	 * mbstring.func_overload flag
@@ -251,7 +251,7 @@ class CI_Log {
 	 */
 	protected function _format_line($level, $date, $message)
 	{
-		return $level.' - '.$date.' --> '.$message."\n";
+		return '['.$level.'] '.$date.' '.$message."\n";
 	}
 
 	// --------------------------------------------------------------------

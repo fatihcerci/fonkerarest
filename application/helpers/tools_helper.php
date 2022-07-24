@@ -556,16 +556,19 @@ function check_auth(){
     $request = (object) json_decode(file_get_contents('php://input'),true);
 
     if(empty($request->token)) {
+        create_log($request);
         return false;
     }
 
     $user_token = $t->session_model->get(array("token" => $request->token));
 
     if(empty($user_token)) {
+        create_log($request);
         return false;
     }
 
     if($user_token->expiration_time < date("Y-m-d H:i:s")) {
+        create_log($request);
         $t->session_model->delete(array("token" => $request->token));
         return false;
     }
@@ -578,6 +581,10 @@ function check_auth(){
             "expiration_time" => date('Y-m-d H:i:s', strtotime($t->config->item('session_expire_add_time')))
         )
     );
+
+    $user = $t->user_model->get(array("id" => $user_token->user_id));
+
+    create_log($request);
     return true;
 }
 

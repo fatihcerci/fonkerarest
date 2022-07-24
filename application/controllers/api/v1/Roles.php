@@ -32,6 +32,7 @@ class Roles extends CI_Controller
         $resp->status = $this->create_status(true, "");
 
         echo json_encode($resp);
+        response($resp);
     }
 
     public function return_timeout() {
@@ -39,6 +40,7 @@ class Roles extends CI_Controller
 
         $resp->status = $this->create_status(false, "MSG0000");
         echo json_encode($resp);
+        response($resp);
         die();
     }
 
@@ -61,6 +63,7 @@ class Roles extends CI_Controller
         $resp->status = $this->create_status(true, "");
 
         echo json_encode($resp);
+        response($resp);
     }
 
     public function create_update() {
@@ -76,7 +79,7 @@ class Roles extends CI_Controller
                         "name"                      => $json->name,
                         "description"               => $json->description,
 
-                        "last_updated"              => date("Y-m-d H:i:s")
+                        "last_updated"              => date("Y-m-d H:i:s"),
                         "last_updater_id"           => $this->sessionUser->id,
                     )
                 );
@@ -118,7 +121,7 @@ class Roles extends CI_Controller
         }
  
         echo json_encode($resp);
-        
+        response($resp);
     }
 
     public function activate_passivate() {
@@ -148,6 +151,7 @@ class Roles extends CI_Controller
             
         } 
         echo json_encode($resp);
+        response($resp);
     }
     
 }

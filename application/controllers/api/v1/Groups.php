@@ -32,6 +32,7 @@ class Groups extends CI_Controller
         $resp->status = $this->create_status(true, "");
 
         echo json_encode($resp);
+        response($resp);
     }
 
     public function return_timeout() {
@@ -39,6 +40,7 @@ class Groups extends CI_Controller
 
         $resp->status = $this->create_status(false, "MSG0000");
         echo json_encode($resp);
+        response($resp);
         die();
     }
 
@@ -61,6 +63,7 @@ class Groups extends CI_Controller
         $resp->status = $this->create_status(true, "");
 
         echo json_encode($resp);
+        response($resp);
     }
 
     public function create_update() {
@@ -124,7 +127,7 @@ class Groups extends CI_Controller
         }
  
         echo json_encode($resp);
-        
+        response($resp);
     }
 
     public function activate_passivate() {
@@ -154,6 +157,7 @@ class Groups extends CI_Controller
             
         } 
         echo json_encode($resp);
+        response($resp);
     }
     
 }

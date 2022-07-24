@@ -537,7 +537,6 @@ class CI_Output {
 		{
 			echo $output; // Send it to the browser!
 		}
-
 		log_message('info', 'Final output sent to browser');
 		log_message('debug', 'Total execution time: '.$elapsed);
 	}

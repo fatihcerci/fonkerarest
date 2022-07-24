@@ -10,7 +10,7 @@ class Userop extends CI_Controller
 
         $this->load->model("user_model");
 
-        $this->create_status();
+        create_log($this->get_request());
     }
     
     public function index(){
@@ -24,6 +24,7 @@ class Userop extends CI_Controller
         $resp->status = $this->create_status(true, "");
 
         echo json_encode($resp);
+        response($resp);
     }
 
     public function return_timeout() {
@@ -31,6 +32,7 @@ class Userop extends CI_Controller
 
         $resp->status = $this->create_status(false, "MSG0000");
         echo json_encode($resp);
+        response($resp);
         die();
     }
 
@@ -77,6 +79,7 @@ class Userop extends CI_Controller
             }
         } 
         echo json_encode($resp);
+        response($resp);
     }
 
     public function reset_password() {
@@ -133,6 +136,7 @@ class Userop extends CI_Controller
             }
         } 
         echo json_encode($resp);
+        response($resp);
     }
 
     public function logout() {
@@ -152,6 +156,7 @@ class Userop extends CI_Controller
             } 
         } 
         echo json_encode($resp);
+        response($resp);
     }
     
 }
