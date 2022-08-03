@@ -588,7 +588,7 @@ function check_auth(){
     return true;
 }
 
-function insert_auth($user_id, $token){
+function insert_auth($user_id, $token, $ip = null){
     $t = &get_instance();
     $t->load->model("session_model");
     $t->load->model("user_model");
@@ -604,7 +604,10 @@ function insert_auth($user_id, $token){
 
     $t->user_model->update(
         array("id" => $user_id),
-        array("last_login_time" => date('Y-m-d H:i:s'))
+        array(
+            "last_login_time" => date('Y-m-d H:i:s'),
+            "last_login_ip" => $ip
+        )
     );
 
     return true;

@@ -67,7 +67,7 @@ class Userop extends CI_Controller
                     $token = get_encrypt($user->email);
                     $user->token = $token;
 
-                    insert_auth($user->id, $token);
+                    insert_auth($user->id, $token, $_SERVER["REMOTE_ADDR"]);
 
                     $resp->status = $this->create_status(true, "");
                     $resp->data = json_encode($user);

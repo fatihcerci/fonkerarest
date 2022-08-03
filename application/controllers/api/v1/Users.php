@@ -58,13 +58,23 @@ class Users extends CI_Controller
         $json = $this->get_request();
         $resp = new stdClass();
 
-        $records = $this->user_model->get_all();
+        $where = array();
+        if(!empty($json->filterClause)) {
+            $where = $json->filterClause;
+        }
+
+        $searchKey = "";
+        if(!empty($json->searchKey)) {
+            $searchKey = $json->searchKey;
+        }
+
+        $records = $this->user_model->get_all($searchKey, $where);
 
         foreach($records as $r) {
             $date = DateTime::createFromFormat('Y-m-d', $r->birthdate);
             $birthdate=$date->format('d/m/Y');
 
-            $r->birthdate = $birthdate;
+            $r->birthdateStr = $birthdate;
         }
 
         $resp->data = $records;
@@ -79,22 +89,20 @@ class Users extends CI_Controller
         $json = $this->get_request();
     
         if(!empty($json->name)) {
-            $date = DateTime::createFromFormat('d/m/Y', $json->birthdate);
-            $birthdate=$date->format('Y-m-d');
-
             if(!empty($json->id)) {
                 $update = $this->user_model->update(
                     array("id" => $json->id),
                     array(
-                        "tckn"                      => $json->tckn,
+                        "country"                   => $json->country,
+                        "identity_number"           => $json->identity_number,
                         "name"                      => $json->name,
                         "surname"                   => $json->surname,
                         "title"                     => $json->title,
-                        "birthdate"                 => $birthdate,
+                        "birthdate"                 => $json->birthdate,
                         "phone"                     => $json->phone,
                         "email"                     => $json->email,
                         "group_id"                  => $json->group_id,
-                        "role_id"                   => $json->role_id,
+                        "role"                      => $json->role,
 
                         "last_updated"              => date("Y-m-d H:i:s"),
                         "last_updater_id"           => $this->sessionUser->id,
@@ -120,15 +128,16 @@ class Users extends CI_Controller
                         "created_time"              => date("Y-m-d H:i:s"),
                         "creator_id"                => $this->sessionUser->id,
 
-                        "tckn"                      => $json->tckn,
+                        "country"                   => $json->country,
+                        "identity_number"           => $json->identity_number,
                         "name"                      => $json->name,
                         "surname"                   => $json->surname,
                         "title"                     => $json->title,
-                        "birthdate"                 => $birthdate,
+                        "birthdate"                 => $json->birthdate,
                         "phone"                     => $json->phone,
                         "email"                     => $json->email,
                         "group_id"                  => $json->group_id,
-                        "role_id"                   => $json->role_id,
+                        "role"                      => $json->role,
 
                         "password"                  => md5($temp_password)
                     )
